@@ -1,0 +1,4101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITSM Tool - Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+Pro&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Serif Pro', serif;
+            background-color: #f5f1e8;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3a3226;
+        }
+
+        .auth-container {
+            background: rgba(245, 241, 232, 0.9);
+            border: 1px solid #d4c9b8;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 
+                        inset 0 0 15px rgba(255, 255, 255, 0.5);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #8b6b4a, #c2a582, #8b6b4a);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .logo h1 {
+            color: #5d4b36;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .logo p {
+            color: #7a6b58;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #5d4b36;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"], select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d4c9b8;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.7);
+            font-family: inherit;
+            color: #3a3226;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #8b6b4a;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to bottom, #8b6b4a, #6d563d);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 107, 74, 0.3);
+            background: linear-gradient(to bottom, #9a7b58, #7d6347);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #7a6b58;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .btn-secondary:hover {
+            background: #6d5f4e;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #7a6b58;
+            font-style: italic;
+        }
+
+        .switch-form a {
+            color: #8b6b4a;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: #8b2e2e;
+            background: #f8e8e8;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8c8c8;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .success {
+            color: #3a6b3a;
+            background: #e8f8e8;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #c8e8c8;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* ITSM Dashboard Styles */
+        .dashboard {
+            background: #f5f1e8;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            min-height: 100vh;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #3a3226;
+            color: #d4c9b8;
+            padding: 20px 0;
+            overflow-y: auto;
+            border-right: 1px solid #5d4b36;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #5d4b36;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo h2 {
+            color: #d4c9b8;
+            margin: 0;
+            font-size: 1.5em;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #d4c9b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .sidebar .nav-item:hover, .sidebar .nav-item.active {
+            background: rgba(139, 107, 74, 0.2);
+            color: #f5f1e8;
+            border-left-color: #c2a582;
+        }
+
+        .sidebar .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            font-style: normal;
+        }
+
+        .main-wrapper {
+            margin-left: 240px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(245, 241, 232, 0.9);
+            border-bottom: 1px solid #d4c9b8;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-title {
+            font-size: 1.5em;
+            color: #5d4b36;
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #d4c9b8;
+            border-radius: 6px;
+            padding: 8px 12px;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:hover {
+            border-color: #8b6b4a;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            font-family: 'Source Serif Pro', serif;
+            color: #3a3226;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to bottom, #8b6b4a, #6d563d);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to bottom, #9a7b58, #7d6347);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Playfair Display', serif;
+            color: #5d4b36;
+        }
+
+        .logout-btn {
+            background: #8b2e2e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .logout-btn:hover {
+            background: #7a2626;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #5d4b36;
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .stat-label {
+            color: #7a6b58;
+            font-size: 0.9em;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            background: rgba(245, 241, 232, 0.9);
+            padding: 15px 20px;
+            border-bottom: 1px solid #d4c9b8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #5d4b36;
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 6px 12px;
+            border: 1px solid #d4c9b8;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-family: 'Source Serif Pro', serif;
+            color: #3a3226;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:hover {
+            border-color: #8b6b4a;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #8b6b4a;
+            box-shadow: 0 0 0 3px rgba(139, 107, 74, 0.1);
+        }
+
+        .tickets-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .tickets-table th {
+            background: rgba(245, 241, 232, 0.9);
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #5d4b36;
+            border-bottom: 2px solid #d4c9b8;
+            font-size: 14px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .tickets-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9e0d2;
+            font-size: 14px;
+            color: #3a3226;
+        }
+
+        .tickets-table tr:hover {
+            background: rgba(245, 241, 232, 0.5);
+        }
+
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .priority-p1 {
+            background: #f8e8e8;
+            color: #8b2e2e;
+            border: 1px solid #e8c8c8;
+        }
+
+        .priority-p2 {
+            background: #f8f0e8;
+            color: #8b5a2e;
+            border: 1px solid #e8d8c8;
+        }
+
+        .priority-p3 {
+            background: #f8f0f0;
+            color: #8b3a2e;
+            border: 1px solid #e8d0c8;
+        }
+
+        .priority-p4 {
+            background: #e8f8e8;
+            color: #3a6b3a;
+            border: 1px solid #c8e8c8;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .status-open {
+            background: #e6f3ff;
+            color: #2b6cb0;
+            border: 1px solid #c8d8e8;
+        }
+
+        .status-closed {
+            background: #f0f4f8;
+            color: #4a5568;
+            border: 1px solid #d8dce0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(245, 241, 232, 0.9);
+            border-top: 1px solid #d4c9b8;
+        }
+
+        .pagination-info {
+            color: #7a6b58;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #d4c9b8;
+            background: rgba(255, 255, 255, 0.7);
+            color: #5d4b36;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .page-btn:hover {
+            background: rgba(245, 241, 232, 0.9);
+            border-color: #8b6b4a;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(to bottom, #8b6b4a, #6d563d);
+            color: white;
+            border-color: #6d563d;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+          background-color: #f5f1e8;
+    background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #d4c9b8;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    max-height: 90vh; /* Ensure it doesn't exceed viewport height */
+    position: relative;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+.modal-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    padding: 12px 20px;
+    background-color: #6b5344;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+.modal-toggle:hover {
+    background-color: #8a6d5b;
+}
+.body-no-scroll {
+    overflow: hidden;
+    height: 100%;
+}
+        .modal-header {
+            background: linear-gradient(to bottom, #8b6b4a, #6d563d);
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #d4c9b8;
+            text-align: right;
+            background: rgba(245, 241, 232, 0.9);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-col-full {
+            width: 100%;
+        }
+
+        /* Dashboard specific styles */
+        .dashboard-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+        }
+
+        .chart-toggle {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chart-btn {
+            padding: 8px 16px;
+            border: 1px solid #d4c9b8;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .chart-btn.active {
+            background: linear-gradient(to bottom, #8b6b4a, #6d563d);
+            color: white;
+            border-color: #6d563d;
+        }
+
+        .chart-btn:hover {
+            background: rgba(245, 241, 232, 0.9);
+            border-color: #8b6b4a;
+        }
+
+        .chart-btn.active:hover {
+            background: linear-gradient(to bottom, #9a7b58, #7d6347);
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-filter select, .date-filter input {
+            padding: 6px 12px;
+            border: 1px solid #d4c9b8;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .chart-wrapper.small {
+            height: 250px;
+        }
+
+
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #5d4b36;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+        /* Ticket Details Styles */
+.ticket-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.ticket-detail-item {
+    margin-bottom: 15px;
+}
+
+.ticket-detail-label {
+    font-weight: 600;
+    color: #5d4b36;
+    font-family: 'Playfair Display', serif;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.ticket-detail-value {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #d4c9b8;
+    min-height: 20px;
+}
+
+.ticket-attachments {
+    margin-top: 20px;
+    grid-column: 1 / -1;
+}
+
+.attachment-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+    margin-bottom: 5px;
+}
+
+.attachment-icon {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.ticket-description {
+    grid-column: 1 / -1;
+    white-space: pre-line;
+}
+
+        .category-chart {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .category-chart .chart-wrapper {
+            height: 300px;
+        }
+
+        /* Search highlighting */
+        mark {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
+        /* Search box enhancements */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input:focus {
+            outline: none;
+        }
+
+        /* Assignee dropdown styling */
+        select optgroup {
+            font-weight: bold;
+            font-style: normal;
+            color: #5d4b36;
+            background-color: rgba(245, 241, 232, 0.9);
+            font-family: 'Playfair Display', serif;
+        }
+
+        select optgroup option {
+            font-weight: normal;
+            color: #3a3226;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding-left: 10px;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        /* Vintage paper effect for tables */
+        .tickets-table {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .tickets-table tr:nth-child(even) {
+            background: rgba(245, 241, 232, 0.3);
+        }
+
+        /* Vintage scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f5f1e8;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #8b6b4a;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6d563d;
+        }
+
+        /* Decorative elements */
+        .vintage-border {
+            border: 8px solid transparent;
+            border-image: url('https://www.transparenttextures.com/patterns/old-map.png') 30 round;
+        }
+
+        /* Tooltip styles */
+        [data-tooltip] {
+            position: relative;
+            cursor: pointer;
+        }
+
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3a3226;
+            color: #f5f1e8;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 100;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        /* New styles for enhanced charts */
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .chart-legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .chart-legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+
+        .chart-stats {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .chart-stats-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #5d4b36;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .chart-stats-item {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chart-stats-value {
+            font-weight: bold;
+        }
+
+        .sla-alert {
+            background: #f8e8e8;
+            border-left: 4px solid #8b2e2e;
+            padding: 10px 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-family: 'Source Serif Pro', serif;
+        }
+
+        .sla-alert-title {
+            font-weight: bold;
+            color: #8b2e2e;
+            margin-bottom: 5px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .top-performers-list {
+            margin-top: 15px;
+        }
+
+        .top-performer {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9e0d2;
+        }
+
+        .top-performer-name {
+            font-weight: bold;
+            color: #5d4b36;
+        }
+
+        .top-performer-dept {
+            font-style: italic;
+            color: #7a6b58;
+            font-size: 0.9em;
+        }
+
+        .top-performer-count {
+            font-weight: bold;
+            color: #8b6b4a;
+        }
+
+        /* New styles for SLA Radar Chart */
+        #slaRadarChart {
+            width: 100%;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+        }
+
+        .amcharts-g2 {
+            stroke-dasharray: 3px 3px;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            animation: am-moving-dashes 1s linear infinite;
+        }
+
+        @keyframes am-moving-dashes {
+            100% { stroke-dashoffset: -31px; }
+        }
+
+        .amcharts-graph-column-front {
+            transition: all .3s .3s ease-out;
+        }
+        .amcharts-graph-column-front:hover {
+            fill: #496375;
+            stroke: #496375;
+            transition: all .3s ease-out;
+        }
+
+        /* Chart header with toggle */
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        /* New styles for chart type dropdown */
+        .chart-type-select {
+            padding: 6px 12px;
+            border: 1px solid #d4c9b8;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-family: 'Source Serif Pro', serif;
+            color: #3a3226;
+            transition: all 0.3s ease;
+        }
+
+        .chart-type-select:hover {
+            border-color: #8b6b4a;
+        }
+
+        /* Trophy styles for top performers */
+        .trophy-icon {
+            margin-left: 5px;
+            font-size: 16px;
+        }
+
+        .gold {
+            color: gold;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+
+        .silver {
+            color: silver;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+
+        .bronze {
+            color: #cd7f32; /* bronze color */
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+
+        /* Bell curve styles */
+        .bell-curve-container {
+            width: 100%;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+        }
+
+        /* Admin Panel Specific Styles */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid #d4c9b8;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .admin-card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #5d4b36;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+            border-bottom: 1px solid #d4c9b8;
+            padding-bottom: 10px;
+        }
+
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .admin-form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .admin-form-group {
+            flex: 1;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .admin-table th {
+            background: rgba(245, 241, 232, 0.9);
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            color: #5d4b36;
+            border-bottom: 2px solid #d4c9b8;
+            font-size: 14px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .admin-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e9e0d2;
+            font-size: 14px;
+            color: #3a3226;
+        }
+
+        .admin-table tr:hover {
+            background: rgba(245, 241, 232, 0.5);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .admin-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .admin-btn-edit {
+            background: rgba(139, 107, 74, 0.2);
+            color: #5d4b36;
+            border: 1px solid #8b6b4a;
+        }
+
+        .admin-btn-delete {
+            background: rgba(139, 46, 46, 0.1);
+            color: #8b2e2e;
+            border: 1px solid #8b2e2e;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4c9b8;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(139, 107, 74, 0.1);
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .access-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .access-admin {
+            background: rgba(139, 107, 74, 0.2);
+            color: #5d4b36;
+        }
+
+        .access-manager {
+            background: rgba(139, 107, 74, 0.1);
+            color: #5d4b36;
+        }
+
+        .access-analyst {
+            background: rgba(139, 107, 74, 0.05);
+            color: #5d4b36;
+        }
+        .attack-type-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .attack-type-select {
+            flex: 1;
+        }
+
+        .attack-type-other {
+            flex: 1;
+            display: none;
+        }
+
+        .category-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .category-select {
+            flex: 1;
+        }
+
+        .category-other {
+            flex: 1;
+            display: none;
+        }
+
+        .subcategory-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .subcategory-select {
+            flex: 1;
+        }
+
+        .subcategory-other {
+            flex: 1;
+            display: none;
+        }
+
+        .description-guide {
+            font-size: 12px;
+            color: #7a6b58;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        .description-field {
+            margin-top: 10px;
+        }
+
+        .attachment-container {
+            margin-top: 15px;
+        }
+
+        .attachment-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: #5d4b36;
+        }
+        /* Add this to your existing CSS */
+.chart-wrapper.small {
+    height: 250px;
+}
+
+.priority-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.priority-legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+    font-size: 12px;
+}
+
+.priority-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+        .attachment-icon {
+            font-size: 20px;
+        }
+
+        .assigned-to-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .assigned-to-select {
+            flex: 1;
+        }
+
+        .ticket-id-preview {
+            font-size: 12px;
+            color: #7a6b58;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .attack-type-container,
+            .category-container,
+            .subcategory-container {
+                flex-direction: column;
+            }
+        }
+        /* Add to your existing CSS */
+.sla-status-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.sla-status-legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+}
+
+.sla-status-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div id="loginForm" class="auth-container">
+        <div class="logo">
+            <h1>ITSM</h1>
+            <p>Service Management Platform</p>
+        </div>
+        
+        <div id="loginMessage"></div>
+        
+        <form id="loginFormElement">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <div class="switch-form">
+            <p>Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+        </div>
+    </div>
+
+    <!-- Signup Form -->
+    <div id="signupForm" class="auth-container hidden">
+        <div class="logo">
+            <h1>ITSM</h1>
+            <p>Service Management Platform</p>
+        </div>
+        
+        <div id="signupMessage"></div>
+        
+        <form id="signupFormElement">
+            <div class="form-group">
+                <label for="signupName">Full Name</label>
+                <input type="text" id="signupName" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input type="email" id="signupEmail" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupDepartment">Department</label>
+                <select id="signupDepartment" name="department" required>
+                    <option value="">Select Department</option>
+                    <option value="IT Department">IT Department</option>
+                    <option value="Network Team">Network Team</option>
+                    <option value="Security Team">Security Team</option>
+                    <option value="Server Administration">Server Administration</option>
+                    <option value="End User Support">End User Support</option>
+                    <option value="Management">Management</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupConfirmPassword">Confirm Password</label>
+                <input type="password" id="signupConfirmPassword" name="confirmPassword" required>
+            </div>
+            
+            <button type="submit" class="btn">Sign Up</button>
+        </form>
+        
+        <div class="switch-form">
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+        </div>
+    </div>
+
+<!-- Create Ticket Modal -->
+    <div id="createTicketModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Ticket</h2>
+                <span class="close" onclick="closeCreateTicketModal()">&times;</span>
+            </div>
+            <form id="createTicketForm">
+                <div class="modal-body">
+                    <div id="createTicketMessage"></div>
+                    <!-- Automatic Ticket ID and Timestamp -->
+                    <div class="form-group">
+                        <label>Ticket ID</label>
+                        <div class="ticket-id-preview" id="ticketIdPreview">TKT-2025-000234</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Timestamp</label>
+                        <div class="ticket-id-preview" id="ticketTimestampPreview">2025-01-15 14:30:45</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ticketTitle">Title *</label>
+                        <input type="text" id="ticketTitle" name="title" required placeholder="Enter ticket title">
+                    </div>
+                    
+                    <!-- Attack Type Selection -->
+                    <div class="form-group">
+                        <label>Attack Type *</label>
+                        <div class="attack-type-container">
+                            <select id="ticketAttackType" class="attack-type-select" name="attack_type" required>
+                                <option value="">Select Attack Type</option>
+                                <option value="Phishing">Phishing</option>
+                                <option value="Malware">Malware</option>
+                                <option value="Network Intrusion">Network Intrusion</option>
+                                <option value="Web Application Attacks">Web Application Attacks</option>
+                                <option value="Insider Threat">Insider Threat</option>
+                                <option value="Denial of Service">Denial of Service (DoS/DDoS)</option>
+                                <option value="Social Engineering">Social Engineering</option>
+                                <option value="Privilege Misuse">Privilege Misuse / Escalation</option>
+                                <option value="Cloud-Specific Attacks">Cloud-Specific Attacks</option>
+                                <option value="APT">Advanced Persistent Threat (APT)</option>
+                                <option value="other">Other (Please specify)</option>
+                            </select>
+                            <input type="text" id="ticketAttackTypeOther" class="attack-type-other" name="attack_type_other" placeholder="Specify attack type">
+                        </div>
+                    </div>
+                    
+                    <!-- Category Selection -->
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <div class="category-container">
+                            <select id="ticketCategory" class="category-select" name="category" required>
+                                <option value="">Select Category</option>
+                                <!-- Categories will be populated based on attack type -->
+                            </select>
+                            <input type="text" id="ticketCategoryOther" class="category-other" name="category_other" placeholder="Specify category">
+                        </div>
+                    </div>
+                    
+                    <!-- Subcategory Selection -->
+                    <div class="form-group">
+                        <label>Subcategory *</label>
+                        <div class="subcategory-container">
+                            <select id="ticketSubcategory" class="subcategory-select" name="subcategory" required>
+                                <option value="">Select Subcategory</option>
+                                <!-- Subcategories will be populated based on category -->
+                            </select>
+                            <input type="text" id="ticketSubcategoryOther" class="subcategory-other" name="subcategory_other" placeholder="Specify subcategory">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="ticketSLA">SLA Priority *</label>
+                            <select id="ticketSLA" name="sla" required>
+                                <option value="">Select SLA Priority</option>
+                                <option value="P1">P1 - Critical (4 hours)</option>
+                                <option value="P2">P2 - High (8 hours)</option>
+                                <option value="P3">P3 - Medium (24 hours)</option>
+                                <option value="P4">P4 - Low (72 hours)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Assignee and Assigned To -->
+                        <div class="form-col">
+                            <label for="ticketAssignee">Assignee</label>
+                            <select id="ticketAssignee" name="assignee">
+                                <option value="Unassigned">Unassigned</option>
+                                <!-- Assignees will be populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label for="ticketAssignedTo">Assigned To *</label>
+                            <select id="ticketAssignedTo" name="assigned_to" required>
+                                <option value="">Select Team Member</option>
+                                <!-- Team members will be populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Description Field -->
+                    <div class="form-group">
+                        <label for="ticketDescription">Description *</label>
+                        <div class="description-guide">Describe the issue in detail including:</div>
+                        <div class="description-guide">(a) Hostname/IP/Location/Region</div>
+                          <textarea id="ticketDescription" name="description" class="description-field" required 
+                                  placeholder="Provide detailed information about the incident..."></textarea>
+                        <div class="description-guide">(b) Risks</div>
+                          <textarea id="ticketDescription" name="description" class="description-field" required 
+                                  placeholder="Provide detailed information about the incident..."></textarea>
+                        <div class="description-guide">(c) Business Impact</div>
+                          <textarea id="ticketDescription" name="description" class="description-field" required 
+                                  placeholder="Provide detailed information about the incident..."></textarea>
+                        <div class="description-guide">(d) Remediation Steps</div>
+                          <textarea id="ticketDescription" name="description" class="description-field" required 
+                                  placeholder="Provide detailed information about the incident..."></textarea>
+                      
+                    </div>
+                    
+                    <!-- Attachment Upload -->
+                    <div class="form-group attachment-container">
+                        <label>Upload Artifacts</label>
+                        <label for="ticketAttachment" class="attachment-label">
+                            <span class="attachment-icon">🔗</span>
+                            <span>Click to attach files (POC, Screenshots, Logs)</span>
+                        </label>
+                        <input type="file" id="ticketAttachment" name="attachment" style="display: none;" multiple>
+                        <div id="attachmentPreview" class="ticket-id-preview"></div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeCreateTicketModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+     <!-- Ticket Details Modal -->
+<div id="ticketDetailsModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Ticket Details</h2>
+            <span class="close" onclick="closeTicketDetailsModal()">&times;</span>
+        </div>
+        <div class="modal-body" id="ticketDetailsContent">
+            <!-- Content will be populated dynamically -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeTicketDetailsModal()">Close</button>
+        </div>
+    </div>
+</div>
+    <!-- ITSM Dashboard -->
+    <div id="dashboard" class="dashboard hidden">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>ITSM Pro</h2>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active" data-section="helpdesk">
+                    <i>📋</i>
+                    <span>Help Desk</span>
+                </a>
+                <a href="#" class="nav-item" data-section="dashboard">
+                    <i>📊</i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reports">
+                    <i>📈</i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="nav-item" data-section="admin">
+                    <i>🔧</i>
+                    <span>Admin</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-wrapper">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1 class="header-title">Help Desk</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search tickets...">
+                        <i>🔍</i>
+                    </div>
+                    <button class="btn-primary" onclick="openCreateTicketModal()">+ New Ticket</button>
+                    <div class="user-info">
+                        <span>Welcome, <span id="userName"></span></span>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Help Desk Section -->
+                <div id="helpdesk" class="content-section-wrapper">
+                    <!-- Stats Bar -->
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-number" id="openTicketsCount">0</div>
+                            <div class="stat-label">Open Tickets</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="totalTicketsCount">0</div>
+                            <div class="stat-label">Total Tickets</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="closedTicketsCount">0</div>
+                            <div class="stat-label">Closed Tickets</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="avgResponseTime">0</div>
+                            <div class="stat-label">Avg Response</div>
+                        </div>
+                    </div>
+
+                    <!-- Tickets Table -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">All Tickets</h2>
+                            <div class="filter-controls">
+                                <select class="filter-select" id="priorityFilter">
+                                    <option>All Tickets</option>
+                                    <option>P1 Priority</option>
+                                    <option>P2 Priority</option>
+                                    <option>P3 Priority</option>
+                                    <option>P4 Priority</option>
+                                </select>
+                                <select class="filter-select" id="statusFilter">
+                                    <option>All Status</option>
+                                    <option>Open</option>
+                                    <option>In Progress</option>
+                                    <option>Resolved</option>
+                                    <option>Closed</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <table class="tickets-table">
+                            <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Assignee</th>
+        <th>Assigned To</th>
+        <th>Category</th>
+        <th>SLA Priority</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Updated</th>
+        <th>Time Remaining</th>
+    </tr>
+</thead>
+                            <tbody id="ticketsTableBody">
+                                <!-- Tickets will be populated here -->
+                            </tbody>
+                        </table>
+                        
+                        <div class="pagination">
+                            <div class="pagination-info" id="paginationInfo">
+                                Showing 0 tickets
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="page-btn">Previous</button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="content-section-wrapper" style="display: none;">
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-number" id="dashOpenTickets">0</div>
+                            <div class="stat-label">Open Tickets</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="dashTotalTickets">0</div>
+                            <div class="stat-label">Total Tickets</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="dashP1Tickets">0</div>
+                            <div class="stat-label">P1 Critical</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="dashClosedTickets">0</div>
+                            <div class="stat-label">Closed Today</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dashboard Controls -->
+                    <div class="dashboard-controls">
+                        <div class="date-filter">
+                            <label>Time Period:</label>
+                            <select id="dateFilter">
+                                <option value="24h">Last 24 Hours</option>
+                                <option value="7d">Last 7 Days</option>
+                                <option value="30d">Last 30 Days</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                            <input type="date" id="startDate" style="display: none;">
+                            <input type="date" id="endDate" style="display: none;">
+                        </div>
+                        
+                        <button class="btn-primary" onclick="exportDashboard()">
+                            <span>📊 Export Executive Dashboard</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Main Charts Grid -->
+                    <div class="chart-grid">
+                        <!-- Main Ticket Status Chart -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <div class="chart-title">Ticket Status Distribution</div>
+                                <select class="chart-type-select" id="chartTypeSelect">
+                                    <option value="line">Line Graph</option>
+                                    <option value="bar">Bar Graph</option>
+                                    <option value="pie">Pie Chart</option>
+                                </select>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="mainChart"></canvas>
+                            </div>
+                            <div id="mainChartStats" class="chart-stats"></div>
+                        </div>
+                        
+                        <!-- Top Performers Chart -->
+                        <div class="chart-container">
+                            <div class="chart-title">Top Performers</div>
+                            <div id="performersRadarChart" style="width: 100%; height: 400px;"></div>
+                            <div class="top-performers-list" id="topPerformersList"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- SLA Timeline Chart (Bell Curve) -->
+                    <div class="chart-container" style="grid-column: 1 / -1;">
+                        <div class="chart-title">SLA Timeline Performance</div>
+                        <div id="slaTimelineChart" style="width: 100%; height: 400px;"></div>
+                        <div id="slaTimelineStats" class="chart-stats"></div>
+                    </div>
+                    <!-- Add this with the other chart containers in the dashboard-section -->
+                     <div class="chart-container">
+    <div class="chart-title">SLA Compliance Status</div>
+    <div class="chart-wrapper">
+        <canvas id="slaStatusChart"></canvas>
+    </div>
+    <div id="slaStatusChartStats" class="chart-stats"></div>
+</div>
+
+<div class="chart-container">
+    <div class="chart-title">Ticket Priority Distribution</div>
+    <div class="chart-wrapper small">
+        <canvas id="priorityChart"></canvas>
+    </div>
+    <div id="priorityChartStats" class="chart-stats"></div>
+</div>
+                    
+                    <!-- SLA Radar Chart -->
+                    <div class="chart-container" style="grid-column: 1 / -1;">
+                        <div class="chart-title">SLA Performance Metrics</div>
+                        <div id="slaRadarChart" style="width: 100%; height: 500px;"></div>
+                        <div id="slaChartStats" class="chart-stats"></div>
+                    </div>
+                    
+                    <!-- Category Breakdown Horizontal Bar Chart -->
+                    <div class="category-chart">
+                        <div class="chart-title">Department Wise Ticket Distribution</div>
+                        <div class="chart-wrapper">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add this with the other chart containers in the dashboard-section -->
+
+
+                <!-- Reports Section -->
+                <div id="reports" class="content-section-wrapper" style="display: none;">
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Reports</h2>
+                        </div>
+                        <div style="padding: 20px; text-align: center;">
+                            <h3>Reporting Module</h3>
+                            <p>Advanced reporting and analytics will be available here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Panel Section -->
+                <div id="admin" class="content-section-wrapper" style="display: none;">
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Admin Panel</h2>
+                        </div>
+                        
+                        <div class="admin-grid">
+                            <!-- User Management Card -->
+                            <div class="admin-card">
+                                <div class="admin-card-title">User Management</div>
+                                <div class="admin-form">
+                                    <div class="form-group">
+                                        <label for="adminSearchUser">Search Users</label>
+                                        <input type="text" id="adminSearchUser" placeholder="Search by name, email, or department">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="adminFilterRole">Filter by Role</label>
+                                        <select id="adminFilterRole" class="filter-select">
+                                            <option value="">All Roles</option>
+                                            <option value="Admin">Admin</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Analyst">Analyst</option>
+                                            <option value="CISO">CISO</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <button class="btn-primary" onclick="openAddUserModal()">Add New User</button>
+                                    
+                                    <div style="overflow-x: auto;">
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Department</th>
+                                                    <th>Role</th>
+                                                    <th>Access</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="adminUsersTable">
+                                                <!-- Users will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- User Details Card -->
+                            <div class="admin-card">
+                                <div class="admin-card-title">User Details</div>
+                                <div id="userDetailsContainer">
+                                    <div style="text-align: center; padding: 20px; color: #666; font-style: italic;">
+                                        Select a user to view or edit details
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Role Management Card -->
+                            <div class="admin-card">
+                                <div class="admin-card-title">Role Management</div>
+                                <div class="admin-form">
+                                    <div class="form-group">
+                                        <label for="roleName">Role Name</label>
+                                        <input type="text" id="roleName" placeholder="Enter role name">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="roleDescription">Description</label>
+                                        <textarea id="roleDescription" placeholder="Enter role description"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Permissions</label>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                            <label><input type="checkbox" name="permissions" value="ticket_create"> Create Tickets</label>
+                                            <label><input type="checkbox" name="permissions" value="ticket_edit"> Edit Tickets</label>
+                                            <label><input type="checkbox" name="permissions" value="ticket_delete"> Delete Tickets</label>
+                                            <label><input type="checkbox" name="permissions" value="user_manage"> Manage Users</label>
+                                            <label><input type="checkbox" name="permissions" value="reports_view"> View Reports</label>
+                                            <label><input type="checkbox" name="permissions" value="admin_access"> Admin Access</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button class="btn-primary">Save Role</button>
+                                        <button class="btn-secondary">Cancel</button>
+                                    </div>
+                                    
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Role</th>
+                                                <th>Description</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Admin</td>
+                                                <td>Full system access</td>
+                                                <td class="admin-actions">
+                                                    <button class="admin-btn admin-btn-edit">Edit</button>
+                                                    <button class="admin-btn admin-btn-delete">Delete</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Manager</td>
+                                                <td>Team management access</td>
+                                                <td class="admin-actions">
+                                                    <button class="admin-btn admin-btn-edit">Edit</button>
+                                                    <button class="admin-btn admin-btn-delete">Delete</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Analyst</td>
+                                                <td>Standard user access</td>
+                                                <td class="admin-actions">
+                                                    <button class="admin-btn admin-btn-edit">Edit</button>
+                                                    <button class="admin-btn admin-btn-delete">Delete</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- System Settings Card -->
+                            <div class="admin-card">
+                                <div class="admin-card-title">System Settings</div>
+                                <div class="admin-form">
+                                    <div class="form-group">
+                                        <label for="systemName">System Name</label>
+                                        <input type="text" id="systemName" value="ITSM Pro">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="slaP1">P1 SLA (hours)</label>
+                                        <input type="number" id="slaP1" value="4" min="1">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="slaP2">P2 SLA (hours)</label>
+                                        <input type="number" id="slaP2" value="8" min="1">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="slaP3">P3 SLA (hours)</label>
+                                        <input type="number" id="slaP3" value="24" min="1">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="slaP4">P4 SLA (hours)</label>
+                                        <input type="number" id="slaP4" value="72" min="1">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Notification Preferences</label>
+                                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                                            <label><input type="checkbox" checked> Email notifications</label>
+                                            <label><input type="checkbox"> SMS notifications</label>
+                                            <label><input type="checkbox" checked> In-app notifications</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button class="btn-primary">Save Settings</button>
+                                        <button class="btn-secondary">Reset to Default</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New User</h2>
+                <span class="close" onclick="closeAddUserModal()">&times;</span>
+            </div>
+            <form id="addUserForm">
+                <div class="modal-body">
+                    <div id="addUserMessage"></div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="userName">Full Name *</label>
+                                <input type="text" id="userName" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userEmail">Email *</label>
+                                <input type="email" id="userEmail" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userDepartment">Department *</label>
+                                <select id="userDepartment" name="department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="IT Department">IT Department</option>
+                                    <option value="Network Team">Network Team</option>
+                                    <option value="Security Team">Security Team</option>
+                                    <option value="Server Administration">Server Administration</option>
+                                    <option value="End User Support">End User Support</option>
+                                    <option value="Management">Management</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userDesignation">Designation</label>
+                                <input type="text" id="userDesignation" name="designation">
+                            </div>
+                        </div>
+                        
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="userRole">Role *</label>
+                                <select id="userRole" name="role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Analyst">Analyst</option>
+                                    <option value="CISO">CISO</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userAccessLevel">Access Level *</label>
+                                <select id="userAccessLevel" name="access_level" required>
+                                    <option value="">Select Access Level</option>
+                                    <option value="1">Level 1 - Basic</option>
+                                    <option value="2">Level 2 - Standard</option>
+                                    <option value="3">Level 3 - Elevated</option>
+                                    <option value="4">Level 4 - Admin</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userPhone">Phone Number</label>
+                                <input type="tel" id="userPhone" name="phone">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="userSecondaryEmail">Secondary Email</label>
+                                <input type="email" id="userSecondaryEmail" name="secondary_email">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userPassword">Password *</label>
+                        <input type="password" id="userPassword" name="password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userConfirmPassword">Confirm Password *</label>
+                        <input type="password" id="userConfirmPassword" name="confirm_password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notification Preferences</label>
+                        <div style="display: flex; gap: 15px;">
+                            <label><input type="checkbox" name="notify_email" checked> Email</label>
+                            <label><input type="checkbox" name="notify_sms"> SMS</label>
+                            <label><input type="checkbox" name="notify_app" checked> In-App</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userTags">Custom Tags</label>
+                        <input type="text" id="userTags" name="tags" placeholder="Comma separated tags">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeAddUserModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+ let users = [];
+let tickets = [];
+let currentUser = null;
+let ticketIdCounter = 1;
+
+// Chart instances
+let mainChart, categoryChart;
+let slaRadarChart, performersRadarChart, slaTimelineChart;
+
+// Attack type categories and subcategories
+const attackTypes = {
+    "Phishing": {
+        "Email Phishing": ["Credential Harvesting", "Fake Login Page", "Malware Attachment"],
+        "Spear Phishing": ["Executive Targeted", "HR Targeted", "Finance Bait"],
+        "Whaling": ["CEO Fraud", "CFO Scam", "BEC (Business Email Compromise)"],
+        "Vishing (Voice)": ["Fake IT Call", "Tech Support Scam"],
+        "Smishing (SMS)": ["Fake OTP Link", "Mobile Wallet Scam"]
+    },
+    "Malware": {
+        "Ransomware": ["Locky", "WannaCry", "Ryuk", "Encryption-Based"],
+        "Trojan": ["Remote Access Trojan (RAT)", "Banking Trojan", "Dropper"],
+        "Worm": ["Self-Replicating", "Network Worm"],
+        "Spyware": ["Keylogger", "Info Stealer", "Clipboard Hijacker"],
+        "Adware": ["Pop-up Flooding", "Redirect-Based"],
+        "Rootkit": ["Kernel-Level", "User-Mode"],
+        "Fileless Malware": ["PowerShell-based", "Memory-resident"]
+    },
+    "Network Intrusion": {
+        "Brute Force": ["SSH Login Attempt", "RDP Cracking", "FTP Attack"],
+        "Port Scanning": ["Nmap", "Masscan", "Stealth Scan"],
+        "MITM (Man-in-the-Middle)": ["ARP Spoofing", "DNS Spoofing", "SSL Stripping"],
+        "Exploitation": ["CVE-Based Exploit", "Remote Code Execution"],
+        "Lateral Movement": ["Pass-the-Hash", "Admin Share Exploitation"]
+    },
+    "Web Application Attacks": {
+        "SQL Injection": ["Login Bypass", "Data Dump"],
+        "XSS (Cross-Site Scripting)": ["Stored XSS", "Reflected XSS", "DOM-based XSS"],
+        "CSRF": ["Unauthorized Transfer", "Token Abuse"],
+        "File Inclusion": ["Local File Inclusion (LFI)", "Remote File Inclusion (RFI)"],
+        "Directory Traversal": ["Accessing Restricted Files"],
+        "Command Injection": ["Shell Injection", "OS Command Execution"]
+    },
+    "Insider Threat": {
+        "Malicious Insider": ["Data Exfiltration", "System Sabotage"],
+        "Negligent Insider": ["Password Misuse", "Public File Sharing"],
+        "Compromised Insider": ["Phished Employee", "Credential Theft"]
+    },
+    "Denial of Service": {
+        "DoS": ["Resource Exhaustion", "Application Flooding"],
+        "DDoS": ["Botnet Attack", "Volumetric Flood", "Amplification"],
+        "Application Layer": ["HTTP Flood", "Slowloris"],
+        "Protocol Attack": ["SYN Flood", "Ping of Death"]
+    },
+    "Social Engineering": {
+        "Impersonation": ["Fake Helpdesk", "Vendor Fraud"],
+        "Pretexting": ["Fake Job Interview", "Survey Scam"],
+        "Tailgating": ["Unauthorized Physical Entry"],
+        "Baiting": ["Infected USB Drive", "Malware-Laced File"]
+    },
+    "Privilege Misuse": {
+        "Privilege Escalation": ["Local Admin Escalation", "Kernel Exploit"],
+        "Abuse of Rights": ["Admin Account Misuse", "Elevated Access Overuse"],
+        "Credential Stuffing": ["Password Reuse Attack"]
+    },
+    "Cloud-Specific Attacks": {
+        "API Abuse": ["Rate Limit Bypass", "Unauthorized Access"],
+        "Misconfiguration": ["Open Buckets", "Overprivileged Roles"],
+        "Account Takeover": ["MFA Bypass", "OAuth Abuse"],
+        "Supply Chain": ["Compromised Vendor App", "Malicious Code Injection"]
+    },
+    "APT": {
+        "APT Reconnaissance": ["Target Profiling", "Social Mapping"],
+        "APT Exploitation": ["Custom Zero-Days", "Targeted Malware"],
+        "APT Persistence": ["Registry Hijack", "Scheduled Task Insertion"],
+        "APT Exfiltration": ["DNS Tunnelling", "Encrypted HTTPS Channels"]
+    }
+};
+
+// LocalStorage functions
+function saveDataToLocalStorage() {
+    localStorage.setItem('itsmUsers', JSON.stringify(users));
+    localStorage.setItem('itsmTickets', JSON.stringify(tickets));
+    localStorage.setItem('itsmTicketIdCounter', ticketIdCounter.toString());
+    if (currentUser) {
+        localStorage.setItem('itsmCurrentUser', JSON.stringify(currentUser));
+    }
+}
+
+function loadDataFromLocalStorage() {
+    const storedUsers = localStorage.getItem('itsmUsers');
+    const storedTickets = localStorage.getItem('itsmTickets');
+    const storedTicketIdCounter = localStorage.getItem('itsmTicketIdCounter');
+    const storedCurrentUser = localStorage.getItem('itsmCurrentUser');
+
+    if (storedUsers) {
+        users = JSON.parse(storedUsers);
+    }
+
+    if (storedTickets) {
+        tickets = JSON.parse(storedTickets);
+        // Convert date strings back to Date objects
+        tickets.forEach(ticket => {
+            ticket.createdAt = new Date(ticket.createdAt);
+            ticket.updatedAt = new Date(ticket.updatedAt);
+        });
+    }
+
+    if (storedTicketIdCounter) {
+        ticketIdCounter = parseInt(storedTicketIdCounter);
+    }
+
+    if (storedCurrentUser) {
+        currentUser = JSON.parse(storedCurrentUser);
+    }
+}
+
+function clearLocalStorage() {
+    localStorage.removeItem('itsmUsers');
+    localStorage.removeItem('itsmTickets');
+    localStorage.removeItem('itsmTicketIdCounter');
+    localStorage.removeItem('itsmCurrentUser');
+}
+
+// Load data from localStorage on page load
+loadDataFromLocalStorage();
+
+// Check if user is already logged in
+if (currentUser) {
+    showDashboard();
+} else {
+    showLogin();
+}
+
+// Show/Hide forms
+function showLogin() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+    clearMessages();
+}
+
+function showSignup() {
+    document.getElementById('signupForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    clearMessages();
+}
+
+function showDashboard() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.body.style.background = '#f5f1e8';
+    
+    if (currentUser) {
+        document.getElementById('userName').textContent = currentUser.name;
+    }
+    
+    // Initialize components
+    setTimeout(() => {
+        initializeSidebar();
+        initializeFilters();
+        loadTickets();
+        updateStats();
+        initializeCharts(); // Initialize charts with animations
+        updateDashboardStats();
+        updateCountdowns(); // Initialize countdowns
+        loadAdminUsers(); // Load admin users table
+    }, 100);
+}
+
+function clearMessages() {
+    document.getElementById('loginMessage').innerHTML = '';
+    document.getElementById('signupMessage').innerHTML = '';
+}
+
+function showMessage(elementId, message, type) {
+    const messageElement = document.getElementById(elementId);
+    messageElement.innerHTML = `<div class="${type}">${message}</div>`;
+}
+
+// Generate ticket ID
+function generateTicketId() {
+   const now = new Date();
+    const year = now.getFullYear();
+    // In production, replace this with a database sequence or atomic counter
+    const sequence = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `TKT-${year}-${sequence}`;
+}
+
+// Format timestamp
+function formatTimestamp(date) {
+    const pad = (num) => num.toString().padStart(2, '0');
+    
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are 0-indexed
+    const year = date.getFullYear();
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+// Update ticket ID and timestamp when modal opens
+function updateTicketMetadata() {
+    const now = new Date();
+    document.getElementById('ticketIdPreview').textContent = generateTicketId();
+    document.getElementById('ticketTimestampPreview').textContent = formatTimestamp(now);
+}
+
+// Handle attack type selection
+function handleAttackTypeChange() {
+    const attackTypeSelect = document.getElementById('ticketAttackType');
+    const attackTypeOther = document.getElementById('ticketAttackTypeOther');
+    const categorySelect = document.getElementById('ticketCategory');
+    
+    // Show/hide other field
+    if (attackTypeSelect.value === 'other') {
+        attackTypeOther.style.display = 'block';
+        attackTypeOther.required = true;
+    } else {
+        attackTypeOther.style.display = 'none';
+        attackTypeOther.required = false;
+    }
+    
+    // Populate categories based on attack type
+    categorySelect.innerHTML = '<option value="">Select Category</option>';
+    
+    if (attackTypeSelect.value && attackTypeSelect.value !== 'other') {
+        const categories = Object.keys(attackTypes[attackTypeSelect.value]);
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+        });
+        
+        // Add "Other" option
+        const otherOption = document.createElement('option');
+        otherOption.value = 'other';
+        otherOption.textContent = 'Other (Please specify)';
+        categorySelect.appendChild(otherOption);
+    }
+    
+    // Clear subcategories
+    document.getElementById('ticketSubcategory').innerHTML = '<option value="">Select Subcategory</option>';
+}
+
+// Handle category selection
+function handleCategoryChange() {
+    const attackTypeSelect = document.getElementById('ticketAttackType');
+    const categorySelect = document.getElementById('ticketCategory');
+    const categoryOther = document.getElementById('ticketCategoryOther');
+    const subcategorySelect = document.getElementById('ticketSubcategory');
+    
+    // Show/hide other field
+    if (categorySelect.value === 'other') {
+        categoryOther.style.display = 'block';
+        categoryOther.required = true;
+    } else {
+        categoryOther.style.display = 'none';
+        categoryOther.required = false;
+    }
+    
+    // Populate subcategories based on category
+    subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+    
+    if (attackTypeSelect.value && attackTypeSelect.value !== 'other' && 
+        categorySelect.value && categorySelect.value !== 'other') {
+        const subcategories = attackTypes[attackTypeSelect.value][categorySelect.value];
+        subcategories.forEach(subcategory => {
+            const option = document.createElement('option');
+            option.value = subcategory;
+            option.textContent = subcategory;
+            subcategorySelect.appendChild(option);
+        });
+        
+        // Add "Other" option
+        const otherOption = document.createElement('option');
+        otherOption.value = 'other';
+        otherOption.textContent = 'Other (Please specify)';
+        subcategorySelect.appendChild(otherOption);
+    }
+}
+
+// Handle subcategory selection
+function handleSubcategoryChange() {
+    const subcategorySelect = document.getElementById('ticketSubcategory');
+    const subcategoryOther = document.getElementById('ticketSubcategoryOther');
+    
+    // Show/hide other field
+    if (subcategorySelect.value === 'other') {
+        subcategoryOther.style.display = 'block';
+        subcategoryOther.required = true;
+    } else {
+        subcategoryOther.style.display = 'none';
+        subcategoryOther.required = false;
+    }
+}
+
+// Handle attachment selection
+function handleAttachmentChange() {
+    const attachmentInput = document.getElementById('ticketAttachment');
+    const attachmentPreview = document.getElementById('attachmentPreview');
+    
+    if (attachmentInput.files.length > 0) {
+        const fileNames = Array.from(attachmentInput.files).map(file => file.name);
+        attachmentPreview.textContent = `Attachments: ${fileNames.join(', ')}`;
+    } else {
+        attachmentPreview.textContent = '';
+    }
+}
+
+// Populate assigned to dropdown
+function populateAssignedToDropdown() {
+    const assigneeSelect = document.getElementById('ticketAssignedTo');
+    assigneeSelect.innerHTML = '<option value="">Select Team Member</option>';
+    
+    // Add default departments
+    const departments = [
+        "Security Team",
+        "Network Team",
+        "IT Department",
+        "Server Administration",
+        "End User Support",
+        "Management"
+    ];
+    
+    departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept;
+        option.textContent = dept;
+        assigneeSelect.appendChild(option);
+    });
+}
+
+// Populate assignee dropdown with registered users
+function populateAssigneeDropdown() {
+    const assigneeSelect = document.getElementById('ticketAssignee');
+    if (!assigneeSelect) return;
+    
+    // Clear existing options except "Unassigned"
+    assigneeSelect.innerHTML = '<option value="Unassigned">Unassigned</option>';
+    
+    // Group users by department
+    const departments = {};
+    users.forEach(user => {
+        if (!departments[user.department]) {
+            departments[user.department] = [];
+        }
+        departments[user.department].push(user);
+    });
+    
+    // Add options grouped by department
+    Object.keys(departments).sort().forEach(dept => {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = dept;
+        
+        departments[dept].sort((a, b) => a.name.localeCompare(b.name)).forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.name;
+            option.textContent = `${user.name} (${user.email})`;
+            optgroup.appendChild(option);
+        });
+        
+        assigneeSelect.appendChild(optgroup);
+    });
+}
+
+// Enhanced open create ticket modal function
+function openCreateTicketModal() {
+    document.getElementById('createTicketModal').style.display = 'block';
+    document.getElementById('createTicketForm').reset();
+    document.getElementById('createTicketMessage').innerHTML = '';
+    
+    // Update metadata
+    updateTicketMetadata();
+    
+    // Populate dropdowns
+    populateAssigneeDropdown();
+    populateAssignedToDropdown();
+    
+    // Reset attack type fields
+    document.getElementById('ticketAttackTypeOther').style.display = 'none';
+    document.getElementById('ticketCategory').innerHTML = '<option value="">Select Category</option>';
+    document.getElementById('ticketCategoryOther').style.display = 'none';
+    document.getElementById('ticketSubcategory').innerHTML = '<option value="">Select Subcategory</option>';
+    document.getElementById('ticketSubcategoryOther').style.display = 'none';
+    document.getElementById('attachmentPreview').textContent = '';
+    
+    // Add event listeners
+    document.getElementById('ticketAttackType').addEventListener('change', handleAttackTypeChange);
+    document.getElementById('ticketCategory').addEventListener('change', handleCategoryChange);
+    document.getElementById('ticketSubcategory').addEventListener('change', handleSubcategoryChange);
+    document.getElementById('ticketAttachment').addEventListener('change', handleAttachmentChange);
+}
+
+// Enhanced close create ticket modal function
+function closeCreateTicketModal() {
+    document.getElementById('createTicketModal').style.display = 'none';
+    
+    // Remove event listeners
+    document.getElementById('ticketAttackType').removeEventListener('change', handleAttackTypeChange);
+    document.getElementById('ticketCategory').removeEventListener('change', handleCategoryChange);
+    document.getElementById('ticketSubcategory').removeEventListener('change', handleSubcategoryChange);
+    document.getElementById('ticketAttachment').removeEventListener('change', handleAttachmentChange);
+}
+
+// Modal functions
+function openAddUserModal() {
+    document.getElementById('addUserModal').style.display = 'block';
+    document.getElementById('addUserForm').reset();
+    document.getElementById('addUserMessage').innerHTML = '';
+}
+
+function closeAddUserModal() {
+    document.getElementById('addUserModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+// Sidebar navigation
+function openSection(section) {
+    const sections = document.querySelectorAll('.content-section-wrapper');
+    sections.forEach(sec => sec.style.display = 'none');
+
+    if (section === 'dashboard') {
+        document.getElementById('dashboard-section').style.display = 'block';
+        updateDashboardStats();
+    } else {
+        const activeSection = document.getElementById(section);
+        if (activeSection) activeSection.style.display = 'block';
+        
+        if (section === 'admin') {
+            loadAdminUsers();
+        }
+    }
+}
+
+// Initialize sidebar navigation after DOM is loaded
+function initializeSidebar() {
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('.nav-item.active').classList.remove('active');
+            this.classList.add('active');
+            openSection(this.dataset.section);
+        });
+    });
+}
+
+// Initialize SLA Radar Chart
+function initializeSLARadarChart() {
+    am4core.ready(function() {
+        am4core.useTheme(am4themes_animated);
+        
+        const chart = am4core.create("slaRadarChart", am4charts.RadarChart);
+        chart.colors.step = 2;
+        
+        // Add data
+        chart.data = [{
+            "metric": "SLA Compliance",
+            "value": 0,
+            "target": 90
+        }, {
+            "metric": "Avg Resolution",
+            "value": 0,
+            "target": 80
+        }, {
+            "metric": "P1 Tickets",
+            "value": 0,
+            "target": 15
+        }, {
+            "metric": "Escalations",
+            "value": 0,
+            "target": 5
+        }, {
+            "metric": "First Response",
+            "value": 0,
+            "target": 85
+        }];
+        
+        // Create axes
+        const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "metric";
+        categoryAxis.renderer.grid.template.location = 0;
+        
+        const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.strokeOpacity = 0.1;
+        valueAxis.min = 0;
+        valueAxis.max = 100;
+        
+        // Create series
+        const series1 = chart.series.push(new am4charts.RadarColumnSeries());
+        series1.dataFields.valueY = "value";
+        series1.dataFields.categoryX = "metric";
+        series1.name = "Actual";
+        series1.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
+        series1.columns.template.fillOpacity = 0.8;
+        series1.columns.template.strokeOpacity = 0;
+        
+        const series2 = chart.series.push(new am4charts.RadarColumnSeries());
+        series2.dataFields.valueY = "target";
+        series2.dataFields.categoryX = "metric";
+        series2.name = "Target";
+        series2.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
+        series2.columns.template.fillOpacity = 0.2;
+        series2.columns.template.strokeOpacity = 0;
+        
+        // Add cursor
+        chart.cursor = new am4charts.RadarCursor();
+        
+        window.slaRadarChart = chart;
+    });
+}
+
+// Initialize Performers Radar Chart
+function initializePerformersRadarChart() {
+    am4core.ready(function() {
+        am4core.useTheme(am4themes_animated);
+        
+        const chart = am4core.create("performersRadarChart", am4charts.RadarChart);
+        chart.colors.list = [
+            am4core.color("#8b6b4a"),
+            am4core.color("#6d563d"),
+            am4core.color("#c2a582"),
+            am4core.color("#5d4b36"),
+            am4core.color("#7a6b58")
+        ];
+        
+        // Add data
+        chart.data = [];
+        
+        // Create axes
+        const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        categoryAxis.dataFields.category = "metric";
+        categoryAxis.renderer.grid.template.location = 0;
+        categoryAxis.renderer.labels.template.fontSize = 12;
+        categoryAxis.renderer.labels.template.fontFamily = "'Source Serif Pro', serif";
+        
+        const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.strokeOpacity = 0.1;
+        valueAxis.min = 0;
+        valueAxis.max = 100;
+        valueAxis.renderer.labels.template.fontSize = 12;
+        valueAxis.renderer.labels.template.fontFamily = "'Source Serif Pro', serif";
+        
+        // Create series
+        const series1 = chart.series.push(new am4charts.RadarSeries());
+        series1.dataFields.valueY = "value";
+        series1.dataFields.categoryX = "metric";
+        series1.name = "Performance";
+        series1.strokeWidth = 2;
+        series1.fillOpacity = 0.4;
+        series1.tooltipText = "{name}: [bold]{valueY}[/]";
+        
+        // Add cursor
+        chart.cursor = new am4charts.RadarCursor();
+        chart.cursor.lineY.disabled = true;
+        
+        // Add legend
+        chart.legend = new am4charts.Legend();
+        chart.legend.labels.template.fontFamily = "'Playfair Display', serif";
+        chart.legend.labels.template.fontSize = 12;
+        
+        window.performersRadarChart = chart;
+    });
+}
+
+// Initialize SLA Timeline Chart (Bell Curve)
+function initializeSLATimelineChart() {
+    am4core.ready(function() {
+        am4core.useTheme(am4themes_animated);
+        
+        const chart = am4core.create("slaTimelineChart", am4charts.XYChart);
+        chart.colors.list = [
+            am4core.color("#8b6b4a"),
+            am4core.color("#6d563d"),
+            am4core.color("#c2a582"),
+            am4core.color("#5d4b36"),
+            am4core.color("#7a6b58")
+        ];
+        
+        // Add data
+        chart.data = [];
+        
+        // Create axes
+        const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.grid.template.location = 0;
+        dateAxis.renderer.labels.template.fontSize = 12;
+        dateAxis.renderer.labels.template.fontFamily = "'Source Serif Pro', serif";
+        dateAxis.title.text = "Timeline";
+        dateAxis.title.fontFamily = "'Playfair Display', serif";
+        
+        const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.renderer.grid.template.strokeOpacity = 0.1;
+        valueAxis.min = 0;
+        valueAxis.max = 100;
+        valueAxis.renderer.labels.template.fontSize = 12;
+        valueAxis.renderer.labels.template.fontFamily = "'Source Serif Pro', serif";
+        valueAxis.title.text = "SLA Compliance %";
+        valueAxis.title.fontFamily = "'Playfair Display', serif";
+        
+        // Create series (Bell Curve)
+        const series = chart.series.push(new am4charts.LineSeries());
+        series.dataFields.dateX = "date";
+        series.dataFields.valueY = "value";
+        series.name = "SLA Compliance";
+        series.strokeWidth = 2;
+        series.tensionX = 0.8;
+        series.tensionY = 0.8;
+        series.fillOpacity = 0.4;
+        series.tooltipText = "SLA Compliance: [bold]{valueY}%[/] on {dateX}";
+        
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+        chart.cursor.lineY.disabled = true;
+        
+        // Add scrollbar
+        chart.scrollbarX = new am4charts.XYChartScrollbar();
+        chart.scrollbarX.series.push(series);
+        
+        window.slaTimelineChart = chart;
+    });
+}
+
+// Initialize chart data and configurations with animations
+function initializeCharts() {
+    const mainCtx = document.getElementById('mainChart').getContext('2d');
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const slaStatusCtx = document.getElementById('slaStatusChart').getContext('2d');
+    const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+
+    // Main Ticket Status Chart - starts as line graph
+    mainChart = new Chart(mainCtx, {
+        type: 'line',
+        data: {
+            labels: ['Open', 'Closed', 'In Progress', 'Resolved'],
+            datasets: [{
+                label: 'Ticket Status',
+                data: [0, 0, 0, 0],
+                backgroundColor: 'rgba(139, 107, 74, 0.2)',
+                borderColor: 'rgba(139, 107, 74, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(139, 107, 74, 1)',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(58, 50, 38, 0.9)',
+                    titleFont: {
+                        family: "'Playfair Display', serif",
+                        size: 14
+                    },
+                    bodyFont: {
+                        family: "'Source Serif Pro', serif",
+                        size: 12
+                    },
+                    padding: 12,
+                    cornerRadius: 6,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw || 0;
+                            return `${label}: ${value}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(212, 201, 184, 0.5)'
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Source Serif Pro', serif"
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(212, 201, 184, 0.5)'
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Playfair Display', serif"
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Category Breakdown Chart with animation
+    categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: ['End User', 'Network', 'Security', 'Server'],
+            datasets: [{
+                label: 'Tickets by Department',
+                data: [0, 0, 0, 0],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(255, 159, 64, 0.7)',
+                    'rgba(75, 192, 192, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart',
+                delay: (context) => {
+                    if (context.type === 'data' && context.mode === 'default') {
+                        return context.dataIndex * 300;
+                    }
+                    return 0;
+                },
+                onComplete: (animation) => {
+                    // Bar growing animation
+                    const chartInstance = animation.chart;
+                    const ctx = chartInstance.ctx;
+                    ctx.save();
+                    const meta = chartInstance.getDatasetMeta(0);
+                    
+                    meta.data.forEach((bar, index) => {
+                        const model = bar;
+                        const x = model.x;
+                        const y = model.y;
+                        const width = model.width;
+                        const height = model.height;
+                        
+                        ctx.globalCompositeOperation = 'destination-over';
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+                        ctx.shadowBlur = 10;
+                        ctx.shadowOffsetX = 3;
+                        ctx.shadowOffsetY = 3;
+                        ctx.fillStyle = model.options.backgroundColor;
+                        ctx.fillRect(x - width / 2, y - height / 2, width, height);
+                    });
+                    
+                    ctx.restore();
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(58, 50, 38, 0.9)',
+                    titleFont: {
+                        family: "'Playfair Display', serif",
+                        size: 14
+                    },
+                    bodyFont: {
+                        family: "'Source Serif Pro', serif",
+                        size: 12
+                    },
+                    padding: 12,
+                    cornerRadius: 6
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Source Serif Pro', serif"
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Playfair Display', serif",
+                            size: 14
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // SLA Status Chart
+    window.slaStatusChart = new Chart(slaStatusCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Met', 'Missed', 'At Risk'],
+            datasets: [{
+                label: 'Tickets',
+                data: [0, 0, 0],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',    // Green for Met
+                    'rgba(220, 53, 69, 0.7)',     // Red for Missed
+                    'rgba(255, 193, 7, 0.7)'      // Yellow for At Risk
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(255, 193, 7, 1)'
+                ],
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(58, 50, 38, 0.9)',
+                    titleFont: {
+                        family: "'Playfair Display', serif",
+                        size: 14
+                    },
+                    bodyFont: {
+                        family: "'Source Serif Pro', serif",
+                        size: 12
+                    },
+                    padding: 12,
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(212, 201, 184, 0.5)'
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Source Serif Pro', serif"
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Playfair Display', serif"
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Priority Chart
+    window.priorityChart = new Chart(priorityCtx, {
+        type: 'pie',
+        data: {
+            labels: ['P1 - Critical', 'P2 - High', 'P3 - Medium', 'P4 - Low'],
+            datasets: [{
+                data: [0, 0, 0, 0],
+                backgroundColor: [
+                    'rgba(235, 64, 52, 0.7)',    // P1 Red
+                    'rgba(255, 159, 64, 0.7)',    // P2 Orange
+                    'rgba(255, 205, 86, 0.7)',    // P3 Yellow
+                    'rgba(75, 192, 192, 0.7)'     // P4 Teal
+                ],
+                borderColor: [
+                    'rgba(235, 64, 52, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 205, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        font: {
+                            family: "'Source Serif Pro', serif",
+                            size: 12
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(58, 50, 38, 0.9)',
+                    titleFont: {
+                        family: "'Playfair Display', serif",
+                        size: 14
+                    },
+                    bodyFont: {
+                        family: "'Source Serif Pro', serif",
+                        size: 12
+                    },
+                    padding: 12,
+                    cornerRadius: 6
+                }
+            }
+        }
+    });
+
+    // Initialize radar charts and timeline chart
+    initializeSLARadarChart();
+    initializePerformersRadarChart();
+    initializeSLATimelineChart();
+}
+
+// Update charts with real data
+function updateCharts() {
+    if (!mainChart || !categoryChart || !slaStatusChart || !priorityChart) return;
+    
+    // Count tickets by status
+    const statusCounts = {
+        'Open': 0,
+        'Closed': 0,
+        'In Progress': 0,
+        'Resolved': 0
+    };
+    
+    tickets.forEach(ticket => {
+        statusCounts[ticket.status] = (statusCounts[ticket.status] || 0) + 1;
+    });
+    
+    // Update main chart
+    mainChart.data.datasets[0].data = [
+        statusCounts['Open'],
+        statusCounts['Closed'],
+        statusCounts['In Progress'],
+        statusCounts['Resolved']
+    ];
+    mainChart.update();
+    
+    // Count tickets by department
+    const departmentCounts = {
+        'End User': 0,
+        'Network': 0,
+        'Security': 0,
+        'Server': 0
+    };
+    
+    tickets.forEach(ticket => {
+        if (ticket.assigned_to.includes('End User')) {
+            departmentCounts['End User']++;
+        } else if (ticket.assigned_to.includes('Network')) {
+            departmentCounts['Network']++;
+        } else if (ticket.assigned_to.includes('Security')) {
+            departmentCounts['Security']++;
+        } else if (ticket.assigned_to.includes('Server')) {
+            departmentCounts['Server']++;
+        }
+    });
+    
+    // Update category chart
+    categoryChart.data.datasets[0].data = [
+        departmentCounts['End User'],
+        departmentCounts['Network'],
+        departmentCounts['Security'],
+        departmentCounts['Server']
+    ];
+    categoryChart.update();
+    
+    // Count tickets by priority
+    const priorityCounts = {
+        'P1': 0,
+        'P2': 0,
+        'P3': 0,
+        'P4': 0
+    };
+    
+    tickets.forEach(ticket => {
+        priorityCounts[ticket.sla] = (priorityCounts[ticket.sla] || 0) + 1;
+    });
+    
+    // Update priority chart
+    priorityChart.data.datasets[0].data = [
+        priorityCounts['P1'],
+        priorityCounts['P2'],
+        priorityCounts['P3'],
+        priorityCounts['P4']
+    ];
+    priorityChart.update();
+    
+    // Update SLA status chart (mock data for now)
+    const slaStatusData = {
+        'Met': Math.floor(tickets.length * 0.7),
+        'Missed': Math.floor(tickets.length * 0.1),
+        'At Risk': Math.floor(tickets.length * 0.2)
+    };
+    
+    slaStatusChart.data.datasets[0].data = [
+        slaStatusData['Met'],
+        slaStatusData['Missed'],
+        slaStatusData['At Risk']
+    ];
+    slaStatusChart.update();
+    
+    // Update SLA Radar Chart (if available)
+    if (window.slaRadarChart) {
+        window.slaRadarChart.data = [{
+            "metric": "SLA Compliance",
+            "value": 85,
+            "target": 90
+        }, {
+            "metric": "Avg Resolution",
+            "value": 78,
+            "target": 80
+        }, {
+            "metric": "P1 Tickets",
+            "value": 12,
+            "target": 15
+        }, {
+            "metric": "Escalations",
+            "value": 4,
+            "target": 5
+        }, {
+            "metric": "First Response",
+            "value": 82,
+            "target": 85
+        }];
+        window.slaRadarChart.invalidateData();
+    }
+    
+    // Update Performers Radar Chart (if available)
+    if (window.performersRadarChart) {
+        // Mock data for top performers
+        window.performersRadarChart.data = [{
+            "metric": "Tickets Closed",
+            "value": 95
+        }, {
+            "metric": "SLA Compliance",
+            "value": 92
+        }, {
+            "metric": "Customer Rating",
+            "value": 88
+        }, {
+            "metric": "Response Time",
+            "value": 90
+        }, {
+            "metric": "Knowledge",
+            "value": 85
+        }];
+        window.performersRadarChart.invalidateData();
+        
+        // Update top performers list
+        const topPerformersList = document.getElementById('topPerformersList');
+        topPerformersList.innerHTML = `
+            <div class="top-performer">
+                <div>
+                    <span class="top-performer-name">John Doe</span>
+                    <span class="top-performer-dept">Security Team</span>
+                </div>
+                <span class="top-performer-count">42 <span class="trophy-icon gold">🏆</span></span>
+            </div>
+            <div class="top-performer">
+                <div>
+                    <span class="top-performer-name">Jane Smith</span>
+                    <span class="top-performer-dept">Network Team</span>
+                </div>
+                <span class="top-performer-count">38 <span class="trophy-icon silver">🥈</span></span>
+            </div>
+            <div class="top-performer">
+                <div>
+                    <span class="top-performer-name">Mike Johnson</span>
+                    <span class="top-performer-dept">IT Department</span>
+                </div>
+                <span class="top-performer-count">32 <span class="trophy-icon bronze">🥉</span></span>
+            </div>
+        `;
+    }
+    
+    // Update SLA Timeline Chart (if available)
+    if (window.slaTimelineChart) {
+        // Generate mock timeline data for last 30 days
+        const timelineData = [];
+        const now = new Date();
+        
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(date.getDate() - i);
+            
+            // Random SLA compliance between 70-95%
+            const value = 70 + Math.random() * 25;
+            
+            timelineData.push({
+                date: date,
+                value: Math.round(value)
+            });
+        }
+        
+        window.slaTimelineChart.data = timelineData;
+        window.slaTimelineChart.invalidateData();
+    }
+}
+
+// Initialize filters
+function initializeFilters() {
+    document.getElementById('priorityFilter').addEventListener('change', function() {
+        loadTickets();
+    });
+    
+    document.getElementById('statusFilter').addEventListener('change', function() {
+        loadTickets();
+    });
+    
+    document.getElementById('searchInput').addEventListener('input', function() {
+        loadTickets();
+    });
+    
+    document.getElementById('dateFilter').addEventListener('change', function() {
+        const showCustom = this.value === 'custom';
+        document.getElementById('startDate').style.display = showCustom ? 'block' : 'none';
+        document.getElementById('endDate').style.display = showCustom ? 'block' : 'none';
+        updateDashboardStats();
+    });
+    
+    document.getElementById('startDate').addEventListener('change', function() {
+        updateDashboardStats();
+    });
+    
+    document.getElementById('endDate').addEventListener('change', function() {
+        updateDashboardStats();
+    });
+    
+    document.getElementById('chartTypeSelect').addEventListener('change', function() {
+        mainChart.config.type = this.value;
+        mainChart.update();
+    });
+}
+
+// Load tickets with filtering
+function loadTickets() {
+    const priorityFilter = document.getElementById('priorityFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    
+    let filteredTickets = [...tickets];
+    
+    // Apply priority filter
+    if (priorityFilter && priorityFilter !== 'All Tickets') {
+        const priority = priorityFilter.split(' ')[0]; // Get "P1", "P2", etc.
+        filteredTickets = filteredTickets.filter(ticket => ticket.sla === priority);
+    }
+    
+    // Apply status filter
+    if (statusFilter && statusFilter !== 'All Status') {
+        filteredTickets = filteredTickets.filter(ticket => ticket.status === statusFilter);
+    }
+    
+    // Apply search
+    if (searchQuery) {
+        filteredTickets = filteredTickets.filter(ticket => 
+            ticket.title.toLowerCase().includes(searchQuery) ||
+            ticket.description.toLowerCase().includes(searchQuery) ||
+            ticket.id.toLowerCase().includes(searchQuery) ||
+            ticket.assigned_to.toLowerCase().includes(searchQuery)
+        );
+    }
+    
+    // Sort by creation date (newest first)
+    filteredTickets.sort((a, b) => b.createdAt - a.createdAt);
+    
+    // Update table
+    const tableBody = document.getElementById('ticketsTableBody');
+    tableBody.innerHTML = '';
+    
+    filteredTickets.forEach(ticket => {
+        const row = document.createElement('tr');
+        row.onclick = () => openTicketDetailsModal(ticket.id);
+        row.style.cursor = 'pointer';
+        
+        // Format dates
+        const createdDate = formatDate(ticket.createdAt);
+        const updatedDate = formatDate(ticket.updatedAt);
+        
+        // Calculate time remaining (mock for now)
+        const timeRemaining = calculateTimeRemaining(ticket);
+        
+        row.innerHTML = `
+            <td>${ticket.id}</td>
+            <td>${ticket.title}</td>
+            <td>${ticket.assignee || 'Unassigned'}</td>
+            <td>${ticket.assigned_to}</td>
+            <td>${ticket.category}</td>
+            <td><span class="priority-badge priority-${ticket.sla.toLowerCase()}">${ticket.sla}</span></td>
+            <td><span class="status-badge status-${ticket.status.toLowerCase()}">${ticket.status}</span></td>
+            <td>${createdDate}</td>
+            <td>${updatedDate}</td>
+            <td>${timeRemaining}</td>
+            <td><button class="btn-secondary delete-ticket" data-id="${ticket.id}">Delete</button></td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Update pagination info
+    document.getElementById('paginationInfo').textContent = `Showing ${filteredTickets.length} tickets`;
+    
+    // Update charts with filtered data
+    updateCharts();
+}
+
+function deleteTicket(ticketId) {
+    // Confirm before deleting
+    if (!confirm('Are you sure you want to delete this ticket?')) {
+        return;
+    }
+    
+    // Find index of ticket to delete
+    const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+    
+    if (ticketIndex !== -1) {
+        // Remove ticket from array
+        tickets.splice(ticketIndex, 1);
+        
+        // Save to localStorage
+        saveDataToLocalStorage();
+        
+        // Reload tickets and update stats
+        loadTickets();
+        updateStats();
+        updateCharts();
+        
+        alert('Ticket deleted successfully!');
+    } else {
+        alert('Ticket not found!');
+    }
+}
+// Format date for display
+function formatDate(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    
+    const options = { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    
+    return date.toLocaleDateString('en-US', options);
+}
+
+// Calculate time remaining for SLA (mock for now)
+function calculateTimeRemaining(ticket) {
+    const created = new Date(ticket.createdAt);
+    const now = new Date();
+    const hoursPassed = (now - created) / (1000 * 60 * 60);
+    
+    let slaHours;
+    switch(ticket.sla) {
+        case 'P1': slaHours = 4; break;
+        case 'P2': slaHours = 8; break;
+        case 'P3': slaHours = 24; break;
+        case 'P4': slaHours = 72; break;
+        default: slaHours = 24;
+    }
+    
+    const hoursRemaining = Math.max(0, slaHours - hoursPassed);
+    
+    if (hoursRemaining <= 0) {
+        return '<span style="color: #8b2e2e;">Overdue</span>';
+    } else if (hoursRemaining <= slaHours * 0.25) {
+        return `<span style="color: #8b5a2e;">${Math.round(hoursRemaining)}h left</span>`;
+    } else {
+        return `${Math.round(hoursRemaining)}h left`;
+    }
+}
+
+// Update stats in the dashboard
+function updateStats() {
+    const openTickets = tickets.filter(t => t.status === 'Open').length;
+    const closedTickets = tickets.filter(t => t.status === 'Closed').length;
+    const totalTickets = tickets.length;
+    
+    document.getElementById('openTicketsCount').textContent = openTickets;
+    document.getElementById('closedTicketsCount').textContent = closedTickets;
+    document.getElementById('totalTicketsCount').textContent = totalTickets;
+}
+
+// Update dashboard stats
+function updateDashboardStats() {
+    const dateFilter = document.getElementById('dateFilter').value;
+    let filteredTickets = [...tickets];
+    
+    // Apply date filter
+    if (dateFilter === '24h') {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        filteredTickets = filteredTickets.filter(t => t.createdAt >= yesterday);
+    } else if (dateFilter === '7d') {
+        const lastWeek = new Date();
+        lastWeek.setDate(lastWeek.getDate() - 7);
+        filteredTickets = filteredTickets.filter(t => t.createdAt >= lastWeek);
+    } else if (dateFilter === '30d') {
+        const lastMonth = new Date();
+        lastMonth.setDate(lastMonth.getDate() - 30);
+        filteredTickets = filteredTickets.filter(t => t.createdAt >= lastMonth);
+    } else if (dateFilter === 'custom') {
+        const startDate = new Date(document.getElementById('startDate').value);
+        const endDate = new Date(document.getElementById('endDate').value);
+        
+        if (startDate && endDate) {
+            filteredTickets = filteredTickets.filter(t => 
+                t.createdAt >= startDate && t.createdAt <= endDate
+            );
+        }
+    }
+    
+    const openTickets = filteredTickets.filter(t => t.status === 'Open').length;
+    const closedTickets = filteredTickets.filter(t => t.status === 'Closed').length;
+    const p1Tickets = filteredTickets.filter(t => t.sla === 'P1').length;
+    const totalTickets = filteredTickets.length;
+    
+    document.getElementById('dashOpenTickets').textContent = openTickets;
+    document.getElementById('dashClosedTickets').textContent = closedTickets;
+    document.getElementById('dashP1Tickets').textContent = p1Tickets;
+    document.getElementById('dashTotalTickets').textContent = totalTickets;
+    
+    // Update charts with filtered data
+    updateCharts();
+}
+
+// Update countdowns for tickets nearing SLA
+function updateCountdowns() {
+    const now = new Date();
+    
+    tickets.forEach(ticket => {
+        if (ticket.status === 'Open' || ticket.status === 'In Progress') {
+            const created = new Date(ticket.createdAt);
+            const hoursPassed = (now - created) / (1000 * 60 * 60);
+            
+            let slaHours;
+            switch(ticket.sla) {
+                case 'P1': slaHours = 4; break;
+                case 'P2': slaHours = 8; break;
+                case 'P3': slaHours = 24; break;
+                case 'P4': slaHours = 72; break;
+                default: slaHours = 24;
+            }
+            
+            const hoursRemaining = slaHours - hoursPassed;
+            
+            if (hoursRemaining <= 0) {
+                // Ticket is overdue
+                console.log(`Ticket ${ticket.id} is overdue!`);
+            } else if (hoursRemaining <= slaHours * 0.25) {
+                // Ticket is nearing SLA deadline
+                console.log(`Ticket ${ticket.id} is nearing SLA deadline (${Math.round(hoursRemaining)} hours remaining)`);
+            }
+        }
+    });
+}
+
+// Export dashboard as PDF
+function exportDashboard() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape');
+    
+    // Add title
+    doc.setFontSize(20);
+    doc.setFont('Playfair Display', 'bold');
+    doc.text('ITSM Executive Dashboard', 105, 20, { align: 'center' });
+    
+    // Add date
+    doc.setFontSize(12);
+    doc.setFont('Source Serif Pro', 'normal');
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+    
+    // Add stats
+    doc.setFontSize(14);
+    doc.text('Key Metrics', 20, 45);
+    
+    doc.setFontSize(12);
+    doc.text(`Open Tickets: ${document.getElementById('dashOpenTickets').textContent}`, 20, 55);
+    doc.text(`Closed Tickets: ${document.getElementById('dashClosedTickets').textContent}`, 20, 65);
+    doc.text(`P1 Critical Tickets: ${document.getElementById('dashP1Tickets').textContent}`, 20, 75);
+    doc.text(`Total Tickets: ${document.getElementById('dashTotalTickets').textContent}`, 20, 85);
+    
+    // Convert charts to images and add to PDF
+    const charts = [
+        { id: 'mainChart', title: 'Ticket Status Distribution', x: 80, y: 45 },
+        { id: 'categoryChart', title: 'Department Distribution', x: 80, y: 100 },
+        { id: 'slaStatusChart', title: 'SLA Compliance', x: 180, y: 45 }
+    ];
+    
+    let promises = charts.map(chart => {
+        return html2canvas(document.getElementById(chart.id)).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', chart.x, chart.y, 100, 50);
+            doc.setFontSize(10);
+            doc.text(chart.title, chart.x + 50, chart.y + 60, { align: 'center' });
+        });
+    });
+    
+    // When all charts are added, save the PDF
+    Promise.all(promises).then(() => {
+        doc.save('ITSM-Dashboard-Report.pdf');
+    });
+}
+
+// Open ticket details modal
+function openTicketDetailsModal(ticketId) {
+    const ticket = tickets.find(t => t.id === ticketId);
+    if (!ticket) return;
+    
+    const modalContent = document.getElementById('ticketDetailsContent');
+    modalContent.innerHTML = `
+        <div class="ticket-details-grid">
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Ticket ID</span>
+                <div class="ticket-detail-value">${ticket.id}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Title</span>
+                <div class="ticket-detail-value">${ticket.title}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Status</span>
+                <div class="ticket-detail-value">
+                    <span class="status-badge status-${ticket.status.toLowerCase()}">${ticket.status}</span>
+                </div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Priority</span>
+                <div class="ticket-detail-value">
+                    <span class="priority-badge priority-${ticket.sla.toLowerCase()}">${ticket.sla}</span>
+                </div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Created</span>
+                <div class="ticket-detail-value">${formatDate(ticket.createdAt)}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Last Updated</span>
+                <div class="ticket-detail-value">${formatDate(ticket.updatedAt)}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Assignee</span>
+                <div class="ticket-detail-value">${ticket.assignee || 'Unassigned'}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Assigned To</span>
+                <div class="ticket-detail-value">${ticket.assigned_to}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Attack Type</span>
+                <div class="ticket-detail-value">${ticket.attack_type}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Category</span>
+                <div class="ticket-detail-value">${ticket.category}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Subcategory</span>
+                <div class="ticket-detail-value">${ticket.subcategory}</div>
+            </div>
+            <div class="ticket-detail-item">
+                <span class="ticket-detail-label">Time Remaining</span>
+                <div class="ticket-detail-value">${calculateTimeRemaining(ticket)}</div>
+            </div>
+            <div class="ticket-description">
+                <span class="ticket-detail-label">Description</span>
+                <div class="ticket-detail-value">${ticket.description}</div>
+            </div>
+            <div class="ticket-attachments">
+                <span class="ticket-detail-label">Attachments</span>
+                <div class="ticket-detail-value">
+                    ${ticket.attachments && ticket.attachments.length > 0 ? 
+                        ticket.attachments.map(att => 
+                            `<div class="attachment-item">
+                                <span class="attachment-icon">📎</span>
+                                <span>${att}</span>
+                            </div>`
+                        ).join('') : 
+                        'No attachments'}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('ticketDetailsModal').style.display = 'block';
+}
+
+// Close ticket details modal
+function closeTicketDetailsModal() {
+    document.getElementById('ticketDetailsModal').style.display = 'none';
+}
+
+// Load admin users table
+function loadAdminUsers() {
+    const tableBody = document.getElementById('adminUsersTable');
+    tableBody.innerHTML = '';
+    
+    users.forEach(user => {
+        const row = document.createElement('tr');
+        row.onclick = () => showUserDetails(user.id);
+        
+        let accessBadgeClass = 'access-admin';
+        if (user.role === 'Manager') {
+            accessBadgeClass = 'access-manager';
+        } else if (user.role === 'Analyst') {
+            accessBadgeClass = 'access-analyst';
+        }
+        
+        row.innerHTML = `
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=8b6b4a&color=fff" class="profile-picture">
+                    <span>${user.name}</span>
+                </div>
+            </td>
+            <td>${user.email}</td>
+            <td>${user.department}</td>
+            <td>${user.role}</td>
+            <td><span class="access-badge ${accessBadgeClass}">${user.role}</span></td>
+            <td>
+                <button class="admin-btn admin-btn-edit">Edit</button>
+                <button class="admin-btn admin-btn-delete">Delete</button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Show user details in admin panel
+function showUserDetails(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+    
+    const userDetailsContainer = document.getElementById('userDetailsContainer');
+    userDetailsContainer.innerHTML = `
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=8b6b4a&color=fff&size=100" 
+                 style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #d4c9b8;">
+            <div>
+                <h3 style="margin: 0 0 5px 0; color: #5d4b36; font-family: 'Playfair Display', serif;">${user.name}</h3>
+                <p style="margin: 0 0 5px 0; color: #7a6b58;">${user.email}</p>
+                <p style="margin: 0 0 5px 0; color: #7a6b58;">${user.department}</p>
+                <span class="access-badge ${user.role === 'Admin' ? 'access-admin' : user.role === 'Manager' ? 'access-manager' : 'access-analyst'}">
+                    ${user.role}
+                </span>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <h4 style="margin: 0 0 10px 0; color: #5d4b36; font-family: 'Playfair Display', serif;">Contact Information</h4>
+                <p style="margin: 0 0 5px 0;"><strong>Phone:</strong> ${user.phone || 'Not provided'}</p>
+                <p style="margin: 0 0 5px 0;"><strong>Secondary Email:</strong> ${user.secondary_email || 'Not provided'}</p>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 10px 0; color: #5d4b36; font-family: 'Playfair Display', serif;">Account Details</h4>
+                <p style="margin: 0 0 5px 0;"><strong>Created:</strong> ${formatDate(user.createdAt)}</p>
+                <p style="margin: 0 0 5px 0;"><strong>Last Login:</strong> ${formatDate(user.lastLogin || new Date())}</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <h4 style="margin: 0 0 10px 0; color: #5d4b36; font-family: 'Playfair Display', serif;">Permissions</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <span class="tag">Create Tickets</span>
+                <span class="tag">Edit Tickets</span>
+                <span class="tag">View Reports</span>
+                ${user.role === 'Admin' ? '<span class="tag">Manage Users</span>' : ''}
+                ${user.role === 'Admin' ? '<span class="tag">System Settings</span>' : ''}
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button class="btn-primary" style="padding: 8px 16px;">Edit User</button>
+            <button class="btn-secondary" style="padding: 8px 16px;">Reset Password</button>
+            <button class="logout-btn" style="padding: 8px 16px;">Deactivate</button>
+        </div>
+    `;
+}
+
+// Form submission handlers
+document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    // Find user
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (user) {
+        currentUser = user;
+        saveDataToLocalStorage();
+        showDashboard();
+    } else {
+        showMessage('loginMessage', 'Invalid email or password', 'error');
+    }
+});
+
+document.getElementById('signupFormElement').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const department = document.getElementById('signupDepartment').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    
+    // Validate
+    if (password !== confirmPassword) {
+        showMessage('signupMessage', 'Passwords do not match', 'error');
+        return;
+    }
+    
+    if (users.some(u => u.email === email)) {
+        showMessage('signupMessage', 'Email already registered', 'error');
+        return;
+    }
+    
+    // Create new user
+    const newUser = {
+        id: 'user-' + Date.now(),
+        name,
+        email,
+        department,
+        password,
+        role: 'Analyst',
+        createdAt: new Date(),
+        lastLogin: new Date()
+    };
+    
+    users.push(newUser);
+    saveDataToLocalStorage();
+    
+    showMessage('signupMessage', 'Account created successfully! Please login.', 'success');
+    setTimeout(showLogin, 2000);
+});
+
+document.getElementById('createTicketForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const attachmentInput = document.getElementById('ticketAttachment');
+    
+    // Get attack type (either selected or custom)
+    let attackType = formData.get('attack_type');
+    if (attackType === 'other') {
+        attackType = formData.get('attack_type_other');
+    }
+    
+    // Get category (either selected or custom)
+    let category = formData.get('category');
+    if (category === 'other') {
+        category = formData.get('category_other');
+    }
+    
+    // Get subcategory (either selected or custom)
+    let subcategory = formData.get('subcategory');
+    if (subcategory === 'other') {
+        subcategory = formData.get('subcategory_other');
+    }
+    
+    // Get attachments
+    const attachments = [];
+    if (attachmentInput.files.length > 0) {
+        for (let i = 0; i < attachmentInput.files.length; i++) {
+            attachments.push(attachmentInput.files[i].name);
+        }
+    }
+    
+    // Create new ticket
+    const newTicket = {
+        id: document.getElementById('ticketIdPreview').textContent,
+        title: formData.get('title'),
+        attack_type: attackType,
+        category: category,
+        subcategory: subcategory,
+        sla: formData.get('sla'),
+        assignee: formData.get('assignee'),
+        assigned_to: formData.get('assigned_to'),
+        description: formData.get('description'),
+        status: 'Open',
+        attachments: attachments,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: currentUser ? currentUser.name : 'System'
+    };
+    
+    tickets.push(newTicket);
+    saveDataToLocalStorage();
+    
+    // Update UI
+    loadTickets();
+    updateStats();
+    updateCharts();
+    
+    // Close modal and show success message
+    closeCreateTicketModal();
+    alert('Ticket created successfully!');
+});
+
+document.getElementById('addUserForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Create new user
+    const newUser = {
+        id: 'user-' + Date.now(),
+        name: formData.get('name'),
+        email: formData.get('email'),
+        department: formData.get('department'),
+        designation: formData.get('designation'),
+        role: formData.get('role'),
+        access_level: formData.get('access_level'),
+        phone: formData.get('phone'),
+        secondary_email: formData.get('secondary_email'),
+        password: formData.get('password'),
+        createdAt: new Date(),
+        lastLogin: null
+    };
+    
+    users.push(newUser);
+    saveDataToLocalStorage();
+    
+    // Update UI
+    loadAdminUsers();
+    
+    // Close modal and show success message
+    closeAddUserModal();
+    alert('User added successfully!');
+});
+
+// Logout function
+function logout() {
+    currentUser = null;
+    saveDataToLocalStorage();
+    document.getElementById('dashboard').classList.add('hidden');
+    showLogin();
+    document.body.style.background = '#f5f1e8';
+    document.body.style.backgroundImage = 'url("https://www.transparenttextures.com/patterns/cream-paper.png")';
+}
+
+// Initialize with some sample data if empty
+if (users.length === 0) {
+    users = [
+        {
+            id: 'user-1',
+            name: 'Admin User',
+            email: 'admin@example.com',
+            department: 'IT Department',
+            password: 'admin123',
+            role: 'Admin',
+            createdAt: new Date(),
+            lastLogin: new Date()
+        },
+        {
+            id: 'user-2',
+            name: 'Manager User',
+            email: 'manager@example.com',
+            department: 'Management',
+            password: 'manager123',
+            role: 'Manager',
+            createdAt: new Date(),
+            lastLogin: new Date()
+        },
+        {
+            id: 'user-3',
+            name: 'Analyst User',
+            email: 'analyst@example.com',
+            department: 'Security Team',
+            password: 'analyst123',
+            role: 'Analyst',
+            createdAt: new Date(),
+            lastLogin: new Date()
+        }
+    ];
+}
+
+if (tickets.length === 0) {
+    tickets = [
+        {
+            id: 'TKT-2023-001',
+            title: 'Phishing Attack Detected',
+            attack_type: 'Phishing',
+            category: 'Email Phishing',
+            subcategory: 'Credential Harvesting',
+            sla: 'P1',
+            assignee: 'Analyst User',
+            assigned_to: 'Security Team',
+            description: 'Multiple users reported receiving phishing emails attempting to harvest credentials.',
+            status: 'In Progress',
+            attachments: ['phishing_email.eml', 'screenshot.png'],
+            createdAt: new Date(Date.now() - 86400000), // 1 day ago
+            updatedAt: new Date(Date.now() - 3600000), // 1 hour ago
+            createdBy: 'Admin User'
+        },
+        {
+            id: 'TKT-2023-002',
+            title: 'Network Intrusion Attempt',
+            attack_type: 'Network Intrusion',
+            category: 'Brute Force',
+            subcategory: 'SSH Login Attempt',
+            sla: 'P2',
+            assignee: 'Unassigned',
+            assigned_to: 'Network Team',
+            description: 'Multiple failed SSH login attempts detected from suspicious IP addresses.',
+            status: 'Open',
+            attachments: ['auth.log'],
+            createdAt: new Date(Date.now() - 172800000), // 2 days ago
+            updatedAt: new Date(Date.now() - 172800000),
+            createdBy: 'System'
+        },
+        {
+            id: 'TKT-2023-003',
+            title: 'Malware Infection',
+            attack_type: 'Malware',
+            category: 'Ransomware',
+            subcategory: 'WannaCry',
+            sla: 'P1',
+            assignee: 'Analyst User',
+            assigned_to: 'Security Team',
+            description: 'Workstation showing signs of WannaCry ransomware infection.',
+            status: 'Resolved',
+            attachments: ['scan_report.pdf'],
+            createdAt: new Date(Date.now() - 259200000), // 3 days ago
+            updatedAt: new Date(Date.now() - 86400000), // 1 day ago
+            createdBy: 'Manager User'
+        },
+        {
+            id: 'TKT-2023-004',
+            title: 'Website Defacement',
+            attack_type: 'Web Application Attacks',
+            category: 'XSS',
+            subcategory: 'Stored XSS',
+            sla: 'P3',
+            assignee: 'Analyst User',
+            assigned_to: 'IT Department',
+            description: 'Malicious script injected into contact form leading to website defacement.',
+            status: 'Closed',
+            attachments: ['code_snippet.txt', 'before_after.png'],
+            createdAt: new Date(Date.now() - 604800000), // 1 week ago
+            updatedAt: new Date(Date.now() - 518400000), // 6 days ago
+            createdBy: 'System'
+        }
+    ];
+    
+    saveDataToLocalStorage();
+}
+
+// Initialize event listeners for attack type, category, and subcategory
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('ticketAttackType').addEventListener('change', handleAttackTypeChange);
+    document.getElementById('ticketCategory').addEventListener('change', handleCategoryChange);
+    document.getElementById('ticketSubcategory').addEventListener('change', handleSubcategoryChange);
+    document.getElementById('ticketAttachment').addEventListener('change', handleAttachmentChange);
+    
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-ticket')) {
+            const ticketId = e.target.getAttribute('data-id');
+            deleteTicket(ticketId);
+        }
+    });
+});
+    </script>
+</body>
+</html> 
